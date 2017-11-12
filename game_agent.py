@@ -11,8 +11,120 @@ class SearchTimeout(Exception):
 
 
 def custom_score(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
+    """Outputs a score formed of two parts:
+    a - the inverse of the distance from the centre of the board to the position
+        of the player multiplied by the blank spaces left at the current time of the game
+    b - the inverse of the distance between the two players multiplied by the 
+        difference between the player and the opponent's legal moves
+    
+    This should be the best heuristic function for your project submission.
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    
+    # TODO: finish this function!   
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+    
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    t, s = game.get_player_location(game.get_opponent(player))
+    dist = float((t - y)**2 + (s - x)**2)
+    center_distance = float((h - y)**2 + (w - x)**2)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    # a - the inverse of the distance from the centre of the board to the position
+    # of the player multiplied by the blank spaces left at the current time of the game
+    a = 1/center_distance*len(game.get_blank_spaces())
+    
+    # b - the inverse of the distance between the two players multiplied by the 
+    # difference between the player and the opponent's legal moves
+    b = (1/dist) * float(own_moves - opp_moves)
+    
+    return a + b
+    
+
+def custom_score_2(game, player):
+    """Outputs a score formed of two parts:
+    a - the distance from the centre of the board to the position of the player
+        multiplied by the blank spaces left at the current time of the game and the
+        player legal moves
+    b - the inverse of the distance between the two players multiplied by the 
+        difference between the player and the opponent's legal moves
+
+
+    Note: this function should be called from within a Player instance as
+    `self.score()` -- you should not need to call this function directly.
+
+    Parameters
+    ----------
+    game : `isolation.Board`
+        An instance of `isolation.Board` encoding the current state of the
+        game (e.g., player locations and blocked cells).
+
+    player : object
+        A player instance in the current game (i.e., an object corresponding to
+        one of the player objects `game.__player_1__` or `game.__player_2__`.)
+
+    Returns
+    -------
+    float
+        The heuristic value of the current game state to the specified player.
+    """
+    # TODO: finish this function!    
+
+    if game.is_loser(player):
+        return float("-inf")
+
+    if game.is_winner(player):
+        return float("inf")
+
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    t, s = game.get_player_location(game.get_opponent(player))
+    dist = float((t - y)**2 + (s - x)**2)
+    center_distance = float((h - y)**2 + (w - x)**2)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    # a - the distance from the centre of the board to the position of the player
+    # multiplied by the blank spaces left at the current time of the game and the
+    # player legal moves
+    a = center_distance*len(game.get_blank_spaces())*own_moves
+    
+    # b - the inverse of the distance between the two players multiplied by the 
+    # difference between the player and the opponent's legal moves
+    b = (1/dist) * float(own_moves - opp_moves)
+    
+    return a + b
+
+def custom_score_3(game, player):
+    """Outputs a score formed of two parts:
+    a - the inverse of the distance from the centre of the board to the position
+        of the player multiplied by the blank spaces left at the current time of the game
+    b - the inverse of the distance between the two players multiplied by the 
+        difference between the player and the opponent's legal moves and the width
+        and the height of the board
 
     This should be the best heuristic function for your project submission.
 
@@ -35,58 +147,33 @@ def custom_score(game, player):
         The heuristic value of the current game state to the specified player.
     """
     # TODO: finish this function!
-    raise NotImplementedError
+    
+    if game.is_loser(player):
+        return float("-inf")
 
+    if game.is_winner(player):
+        return float("inf")
 
-def custom_score_2(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
+    w, h = game.width / 2., game.height / 2.
+    y, x = game.get_player_location(player)
+    t, s = game.get_player_location(game.get_opponent(player))
+    dist = float((t - y)**2 + (s - x)**2)
+    center_distance = float((h - y)**2 + (w - x)**2)
+    own_moves = len(game.get_legal_moves(player))
+    opp_moves = len(game.get_legal_moves(game.get_opponent(player)))
+    
+    # a - the inverse of the distance from the centre of the board to the position
+    # of the player multiplied by the blank spaces left at the current time of the game
+    a = (1/center_distance)*len(game.get_blank_spaces())
+    
+    # b - the inverse of the distance between the two players multiplied by the 
+    # difference between the player and the opponent's legal moves and the width
+    # and the height of the board
+    b = (1/dist) * float(own_moves - opp_moves) * w * h
+    
+    return a + b
 
-    Note: this function should be called from within a Player instance as
-    `self.score()` -- you should not need to call this function directly.
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    -------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-    # TODO: finish this function!
-    raise NotImplementedError
-
-
-def custom_score_3(game, player):
-    """Calculate the heuristic value of a game state from the point of view
-    of the given player.
-
-    Note: this function should be called from within a Player instance as
-    `self.score()` -- you should not need to call this function directly.
-
-    Parameters
-    ----------
-    game : `isolation.Board`
-        An instance of `isolation.Board` encoding the current state of the
-        game (e.g., player locations and blocked cells).
-
-    player : object
-        A player instance in the current game (i.e., an object corresponding to
-        one of the player objects `game.__player_1__` or `game.__player_2__`.)
-
-    Returns
-    -------
-    float
-        The heuristic value of the current game state to the specified player.
-    """
-    # TODO: finish this function!
+    
     raise NotImplementedError
 
 
@@ -112,7 +199,7 @@ class IsolationPlayer:
         positive value large enough to allow the function to return before the
         timer expires.
     """
-    def __init__(self, search_depth=3, score_fn=custom_score, timeout=10.):
+    def __init__(self, search_depth=3, score_fn=custom_score, timeout=10.5):
         self.search_depth = search_depth
         self.score = score_fn
         self.time_left = None
@@ -169,6 +256,103 @@ class MinimaxPlayer(IsolationPlayer):
 
         # Return the best move from the last completed search iteration
         return best_move
+    
+    
+    def max_value(self, game, depth):
+        """Returns the best score for the player propagating from children 
+        (maximum score of the move), and the relative move. Depth-limited search is
+        applied.
+        
+        Parameters
+        ----------
+        
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing a copy
+            of the current game state for the minimax search
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+        
+        Returns
+        -------
+        int
+            The best score propagating for the player from children with the
+            minimax method found in the current search
+            
+        (int, int)
+            The board coordinates of the best move found in the current search;
+            (-1, -1) if there are no legal moves
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        
+        legal_moves = game.get_legal_moves()
+        
+        # Returns the score of the leaf
+        if depth <= 0 or len(legal_moves) == 0:
+            return self.score(game,game.active_player), (-1, -1)
+            
+        best_score = float("-inf")
+        best_move = (-1,-1)
+        for l in legal_moves:
+            score, _ = self.min_value(game.forecast_move(l), depth-1)
+            # Assigns the maximum score to best_score and the relative move to
+            # best_move
+            if best_score <= score:
+                best_score = score
+                best_move = l
+                
+        return best_score, best_move
+
+
+    def min_value(self, game, depth):
+        """Returns the best score for the opponent propagating from children 
+        (minimum score of the move), and the relative move. Depth-limited search is
+        applied.
+        
+        Parameters
+        ----------
+        
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing a copy
+            of the current game state for the minimax search
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+        
+        Returns
+        -------
+        int
+            The best score for the opponent propagating from children with the 
+            minimax method found in the current search
+            
+        (int, int)
+            The board coordinates of the best move found in the current search;
+            (-1, -1) if there are no legal moves
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        
+        legal_moves = game.get_legal_moves()
+        
+        # Returns the score of the leaf
+        if depth <= 0 or len(legal_moves) == 0:
+            return self.score(game,game.inactive_player), (-1, -1)
+            
+        best_score = float("+inf")
+        best_move = (-1,-1)
+        for l in legal_moves:
+            score, _ = self.max_value(game.forecast_move(l), depth-1)
+            # Assigns the minimum score to best_score and the relative move to
+            # best_move
+            if best_score >= score:
+                best_score = score
+                best_move = l
+                
+        return best_score, best_move
+
 
     def minimax(self, game, depth):
         """Implement depth-limited minimax search algorithm as described in
@@ -213,6 +397,20 @@ class MinimaxPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
+        
+        legal_moves = game.get_legal_moves()
+        
+        best_score = float("-inf")
+        best_move = (-1,-1)
+        for l in legal_moves:
+            score, _ = self.min_value(game.forecast_move(l), depth - 1)
+            # Assigns the maximum score to best_score and the relative move to
+            # best_move
+            if best_score <= score:
+                best_score = score
+                best_move = l    
+        return best_move
+        
         raise NotImplementedError
 
 
@@ -255,7 +453,142 @@ class AlphaBetaPlayer(IsolationPlayer):
         self.time_left = time_left
 
         # TODO: finish this function!
+        
+        # Initialize the best move so that this function returns something
+        # in case the search fails due to timeout
+        best_move = (-1, -1)
+
+        try:
+            # The try/except block will automatically catch the exception
+            # raised when the timer is about to expire.
+            depth = 1
+            while True:
+                best_move = self.alphabeta(game, depth)
+                depth += 1
+
+        except SearchTimeout:
+            return best_move
+            pass  # Handle any actions required after timeout as needed
+
+        # Return the best move from the last completed search iteration
+        return best_move
+        
         raise NotImplementedError
+        
+    def max_value(self, game, depth, alpha, beta):
+        """Returns the best score for the player propagating from children 
+        (maximum score of the move) pruning the branches according to the alpha beta
+        pruning technique, and the relative move. Depth-limited search is applied.
+        
+        Parameters
+        ----------
+        
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing a copy
+            of the current game state for the minimax search
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+        
+        Returns
+        -------
+        int
+            The best score propagating for the player from children with the
+            alpha beta pruning method found in the current search
+            
+        (int, int)
+            The board coordinates of the best move found in the current search;
+            (-1, -1) if there are no legal moves
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        
+        legal_moves = game.get_legal_moves()
+                
+        # Returns the score of the leaf
+        if depth <= 0 or len(legal_moves) == 0:
+            return self.score(game,game.active_player), (-1, -1)
+            
+        # Finds the best score for the player propagating from children with the 
+        # alpha beta pruning method found in the current search
+        best_score = float("-inf")
+        best_move = (-1,-1)
+        for l in legal_moves:
+            score, _ = self.min_value(game.forecast_move(l), depth-1, alpha, beta)
+            # Assigns the maximum score to best_score and the relative move to
+            # best_move
+            if best_score <= score:
+                best_score = score
+                best_move = l
+            
+            # Prunes the branch according to the alpha beta method
+            if best_score >= beta:
+                return best_score, l
+            
+            # Assigns to alpha the best choice along the path for the player
+            alpha = max(alpha, best_score)
+            
+        return best_score, best_move
+
+
+    def min_value(self, game, depth, alpha, beta):
+        """Returns the best score for the opponent propagating from children 
+        (minimum score of the move) pruning the branches according to the alpha beta
+        pruning technique, and the relative move. Depth-limited search is applied.
+        
+        Parameters
+        ----------
+        
+        game : isolation.Board
+            An instance of the Isolation game `Board` class representing a copy
+            of the current game state for the minimax search
+
+        depth : int
+            Depth is an integer representing the maximum number of plies to
+            search in the game tree before aborting
+        
+        Returns
+        -------
+        int
+            The best score for the opponent propagating from children with the 
+            alpha beta pruning method found in the current search
+            
+        (int, int)
+            The board coordinates of the best move found in the current search;
+            (-1, -1) if there are no legal moves
+        """
+        if self.time_left() < self.TIMER_THRESHOLD:
+            raise SearchTimeout()
+        
+        legal_moves = game.get_legal_moves()
+        
+        # Returns the score of the leaf
+        if depth <= 0 or len(legal_moves) == 0:
+            return self.score(game,game.inactive_player), (-1, -1)
+            
+        # Finds the best score for the opponent propagating from children with the 
+        # alpha beta pruning method found in the current search
+        best_score = float("+inf")
+        best_move = (-1,-1)
+        for l in legal_moves:
+            score, _ = self.max_value(game.forecast_move(l), depth-1, alpha, beta)
+            # Assigns the minimum score to best_score and the relative move to
+            # best_move
+            if best_score >= score:
+                best_score = score
+                best_move = l
+            
+            # Prunes the branch according to the alpha beta method
+            if best_score <= alpha:
+                return best_score, l
+            
+            # Assigns to beta the best choice along the path for the opponent
+            beta = min(beta, best_score)
+        
+        return best_score, best_move
+
+
 
     def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf")):
         """Implement depth-limited minimax search with alpha-beta pruning as
@@ -306,4 +639,7 @@ class AlphaBetaPlayer(IsolationPlayer):
             raise SearchTimeout()
 
         # TODO: finish this function!
+        best_score, best_move = self.max_value(game, depth, alpha, beta)
+        return best_move
+
         raise NotImplementedError
